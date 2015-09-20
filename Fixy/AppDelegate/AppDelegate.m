@@ -15,7 +15,22 @@
 @implementation AppDelegate
             
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Override point for customization after application launch.
+    self.viewcontroller = [[ViewController alloc] initWithNibName:@"InitialViewController" bundle:nil];
+    
+    
+    self.window.rootViewController = self.viewcontroller;
+    
+    [self.window makeKeyAndVisible];
+    // [FBLoginView class];
+    // Override point for customization after application launch.
+  
+    
+    
     // Override point for customization after application launch.
     return YES;
 }

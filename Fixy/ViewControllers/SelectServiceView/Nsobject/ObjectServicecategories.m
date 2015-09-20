@@ -1,15 +1,13 @@
 //
-//  ViewController.h
+//  ObjectServicecategories.m
 //  Fixy
 //
 //  Created by Jignesh kalantri on 20/09/15.
 //  Copyright (c) 2015 My personal mac. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ObjectServicecategories.h"
 
-@interface ViewController : UIViewController
-
+@implementation ObjectServicecategories
 
 @end
-

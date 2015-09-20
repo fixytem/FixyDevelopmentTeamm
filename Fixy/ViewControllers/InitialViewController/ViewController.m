@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-
+#import "HelpViewController.h"
 @interface ViewController ()
 
 @end
@@ -23,5 +23,16 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+-(IBAction)buttonSkipDidPressed:(id)sender
+{
+
+    HelpViewController *helpView = [[HelpViewController alloc] initWithNibName:@"HelpViewController" bundle:nil];
+    [self presentViewController:helpView animated:YES completion:^{
+        
+    }];
+    
+}
+
 
 @end
