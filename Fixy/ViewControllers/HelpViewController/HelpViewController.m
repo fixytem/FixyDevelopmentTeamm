@@ -7,13 +7,19 @@
 //
 
 #import "HelpViewController.h"
+#import "ManualViewController.h"
+
 @interface HelpViewController ()
+
+@property (readonly) CLLocationCoordinate2D currentUserCoordinate;
 
 @end
 
 @implementation HelpViewController
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
+#pragma mark - ================
+#pragma mark - UIview cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
@@ -25,57 +31,103 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+#pragma mark - ================
+#pragma mark -
 
 
-#pragma mark - User define
+
+#pragma mark - ================
+#pragma mark - Location Delegates
 -(void) findingLocation
 {
 
-    locationManager.delegate = self;
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
+    if(locationManager==nil)
     {
-        NSUInteger code = [CLLocationManager authorizationStatus];
-        if (code == kCLAuthorizationStatusNotDetermined && ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)] || [locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)])) {
-            // choose one request according to your business.
-            if([[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationAlwaysUsageDescription"]){
-                [locationManager requestAlwaysAuthorization];
-            } else if([[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"]) {
-                [locationManager  requestWhenInUseAuthorization];
-            } else {
-                NSLog(@"Info.plist does not contain NSLocationAlwaysUsageDescription or NSLocationWhenInUseUsageDescription");
-            }
+        locationManager = [[CLLocationManager alloc] init];
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+    }
+    
+    
+    locationManager.delegate = self;
+    
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8)
+    {
+        CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+        
+        NSLog(@"STATUS = %d",status);
+        
+        // If the status is denied or only granted for when in use, display an alert
+        if (status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusDenied )
+        {
+            NSString *title;
+            title = (status == kCLAuthorizationStatusDenied || status == kCLAuthorizationStatusNotDetermined) ? @"Location services are off" : @"Background location is not enabled";
+            NSString *message = @"You can enable access in Settings->Privacy->Location->Location Services";
+            
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title
+                                                                message:message
+                                                               delegate:self
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+        // The user has not enabled any location services. Request background authorization.
+        else if (status == kCLAuthorizationStatusNotDetermined)
+        {
+            [locationManager requestAlwaysAuthorization];
         }
     }
+    
+
     [locationManager startUpdatingLocation];
     
-}
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
-{
-    NSLog(@"didFailWithError: %@", error);
-    UIAlertView *errorAlert = [[UIAlertView alloc]
-                               initWithTitle:@"Error" message:@"Failed to Get Your Location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [errorAlert show];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    NSLog(@"didUpdateToLocation: %@", newLocation);
-    CLLocation *currentLocation = newLocation;
+    NSLog(@"OldLocation %f %f", oldLocation.coordinate.latitude, oldLocation.coordinate.longitude);
+    NSLog(@"NewLocation %f %f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
     
-    if (currentLocation != nil) {
-        
-        NSLog(@"*-*-*-*- latitude is %@",[NSString stringWithFormat:@"%.8f",currentLocation.coordinate.longitude ]);
-    }
+    locationManager.delegate = nil;
+    [locationManager stopUpdatingLocation];
+    _currentUserCoordinate = [newLocation coordinate];
+    
+    
+    NSLog(@"latitude ...%@", [NSString stringWithFormat:@"%f",_currentUserCoordinate.latitude]);
+    NSLog(@"longitude ...%@", [NSString stringWithFormat:@"%f",_currentUserCoordinate.longitude]);
+    
+    
+    currentLatitude =  _currentUserCoordinate.latitude;
+    currentLongitude = _currentUserCoordinate.longitude;
 }
+
+-(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Location Services Disabled." message:@"Please Enable The Location Services On Your Device." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    
+    [alert show];
+    
+    
+    
+    
+    NSLog(@"location manager failed = %@",error.localizedDescription);
+}
+#pragma mark - ================
+
+
+#pragma mark - ================
+#pragma mark - Navigation To Other Classes
+
+-(IBAction)movingToManualLocationService:(id)sender
+{
+
+    ManualViewController *manualView = [[ManualViewController alloc] initWithNibName:@"ManualViewController" bundle:nil];
+    [self presentViewController:manualView animated:YES completion:^{
+        
+    }];
+}
+
+#pragma mark - ================
+
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "ManualViewController.h"
+#import "HomeViewController.h"
 
 @interface ManualViewController ()
 
@@ -33,5 +34,15 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+-(IBAction)moveToHomeScreen:(id)sender
+{
+
+    HomeViewController *home  = [[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
+    [self presentViewController:home animated:YES completion:^{
+        
+    }];
+}
+
 
 @end

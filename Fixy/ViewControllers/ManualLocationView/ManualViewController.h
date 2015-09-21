@@ -10,4 +10,7 @@
 
 @interface ManualViewController : UIViewController
 
+
+-(IBAction)moveToHomeScreen:(id)sender;
+
 @end

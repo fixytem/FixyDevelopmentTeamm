@@ -11,10 +11,14 @@
 
 @interface HelpViewController : UIViewController <CLLocationManagerDelegate>
 {
-
+    float currentLatitude;
+    float currentLongitude;
     
     CLLocationManager * locationManager;
-    
-    
+
 }
+
+-(IBAction)movingToManualLocationService:(id)sender;
+
+
 @end

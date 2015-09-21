@@ -9,8 +9,17 @@
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UIViewController
+{
+
+     IBOutlet       UICollectionView *collectionViewStates;
+     NSMutableArray                  *arrayForShowStates;
+    
+     IBOutlet UIPageControl          *pageControl;
+}
 
 -(IBAction)buttonSkipDidPressed:(id)sender;
+
+- (IBAction)clickPageControl:(id)sender;
 
 @end
 
